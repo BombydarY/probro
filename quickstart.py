@@ -39,7 +39,7 @@ def main():
         # Call the Drive v3 API
         results = (
             service.files()
-            .list(pageSize=5, fields="nextPageToken, files(id, name,mimeType,createdTime,size,webViewLink,webContentLink,shared,owners,)")
+            .list(pageSize=5, fields="nextPageToken, files(id, name,mimeType,createdTime,size,webViewLink,webContentLink,shared,owners)")
             .execute()
         )
         items = results.get("files", [])
