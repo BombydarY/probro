@@ -1,24 +1,26 @@
-# def my_decorator(func):
-#     def wrapper():
-#         func()
-#         print("Что-то происходит до вызова функции.")
-#         print("Что-то происходит после вызова функции.")
-#     return wrapper
-#
-#
-# @my_decorator
-# def say_hello():
-#     print("Hello!")
-#
-# say_hello()
-# from aiogram import types pep8
+import datetime
 
-# def s (a,b,*args):
-#     print(args)
-# s(1,2,3,4,5,6)
-x = [{"2075010057": "Grisharyzo"}, {"629401483": "pavelgodx"}, {"2075010057": "Grisharyzo"}, {"629401483": "pavelgodx"}, {"629401483": "pavelgodx"}, {"629401483": "pavelgodx"}, {"629401483": "pavelgodx"}, {"629401483": "pavelgodx"}, {"629401483": "pavelgodx"}, {"629401483": "pavelgodx"}, {"629401483": "pavelgodx"}, {"629401483": "pavelgodx"}, {"629401483": "pavelgodx"}]
-ids = [list(f.keys())[0] for f in x ]
+now = datetime.datetime.now()
 
-# for f in x:
-#     ids.append(list(f.keys())[0])
-print(ids)
+
+print ("Текущая дата и время с использованием метода str:")
+print (str(now))
+
+
+print ("Текущая дата и время с использованием атрибутов:")
+print ("Текущий год: %d" % now.year)
+print ("Текущий месяц: %d"% now.month)
+print ("Текущий день: %d" % now.day)
+print ("Текущий час: %d" % now.hour)
+print ("Текущая минута: %d" % now.minute)
+print ("Текущая секунда: %d" % now.second)
+print ("Текущая микросекунда: %d" % now.microsecond)
+
+
+print ("Текущая дата и время с использованием strftime:")
+print (now.strftime(f"{message.chat.title}/%d_%m_%Y_%H_%M_%S_%f_{file_name}"))
+
+
+print ("Текущая дата и время с использованием isoformat:")
+print (now.isoformat())
+
