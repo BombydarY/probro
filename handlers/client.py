@@ -1,7 +1,6 @@
 import datetime
 import json
 from pprint import pprint
-
 from create_bot import dp, bot
 from aiogram import types, Dispatcher
 import os
@@ -11,10 +10,19 @@ from settings import ADMINS
 
 @error_check
 async def send_welcome(message: types.Message):
+    print (message)
+    raise IndexError
     if message.chat.type != "private":
         user = await bot.get_chat_member(message.chat.id, ADMINS[0])
         if user.status != "left":
-            os.mkdir(message.chat.title)    # todo: здесь происходит ошибка, на неё всё равно, потому что декоратор твой работает норм
+            now = datetime.datetime.now()
+            new_file_path = now.strftime(f"{message.chat.title}_%d_%m_%Y_{message.chat.id}")
+            if not os.path.exists(new_file_path):
+                os.mkdir(new_file_path)
+
+
+
+            # todo: здесь происходит ошибка, на неё всё равно, потому что декоратор твой работает норм
             # но, бот отправляет логи (тех. информацию) в чаты с клиентами, так делать не надо, сделать так:
             # создать новую группу, она будет служить чисто для отправки разныех ошибок, вот именно туда и отправлять ошибки
 
@@ -32,18 +40,19 @@ async def files_handler(message: types.Message):
         user = await bot.get_chat_member(message.chat.id,ADMINS[0])
         if user.status != "left":
             now = datetime.datetime.now()
+            chat_id = message.chat.id
+            s = ""
+            for a in os.listdir():
+                if os.path.isdir(a):
+                    if str(chat_id) in a:
+                        s = a
+                        break
 
             file_id = message.photo[-1].file_id if message.photo else message.document.file_id
 
-            file_id = ''
-            if message.photo:
-                file_id = message.photo[-1].file_id
-            else:
-                file_id = message.document.file_id
-
             file = await bot.get_file(file_id)
             file_name = message.document.file_name if message.document else "picture.jpg"
-            new_file_path = now.strftime(f"{message.chat.title}/%d_%m_%Y_%H_%M_%S_%f_{file_name}")
+            new_file_path = now.strftime(f"{s}/%d_%m_%Y_%H_%M_%S_%f_{file_name}")
             await bot.download_file(file.file_path, new_file_path)
 
             await bot.send_message(message.chat.id, f"Файл {file_name} загружен.")
