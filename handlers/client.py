@@ -11,7 +11,7 @@ from settings import ADMINS
 @error_check
 async def send_welcome(message: types.Message):
     print (message)
-    raise IndexError
+
     if message.chat.type != "private":
         user = await bot.get_chat_member(message.chat.id, ADMINS[0])
         if user.status != "left":
