@@ -20,7 +20,7 @@ async def send_welcome(message: types.Message):
         if user.status != "left":
             now = datetime.datetime.now()
             new_file_path = now.strftime(f"{message.chat.title}_%d_%m_%Y_{message.chat.id}")
-
+            id_chat = message.chat.id
             if not quickstart.exists_folder(service=service, folder_name=new_file_path):
                 quickstart.create_folder(service=service, folder_name=new_file_path)
 

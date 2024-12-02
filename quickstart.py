@@ -73,6 +73,7 @@ def create_folder(service, folder_name):
 
 
 def exists_folder(service, folder_name):
+    chat_id = -4535479786
     query = f"name='{folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
     response = service.files().list(q=query, spaces='drive', fields='files(id, name)').execute()
     files = response.get('files', [])
@@ -86,6 +87,16 @@ def exists_folder(service, folder_name):
         print(f"No folder named '{folder_name}' found.")
         return False
 
+
+def exists_folder_id(service):
+    chat_id = "-4595479786"
+    results = service.files().list(pageSize=5,
+                                   fields="nextPageToken, files(id, name, mimeType, size, parents, modifiedTime)").execute()
+    items = results.get('files', [])
+
+    for item in items:
+        if chat_id in item["name"]:
+            print(item)
 
 def get_more_inf(service):
     results = (
@@ -112,4 +123,7 @@ def get_more_inf(service):
 
 if __name__ == "__main__":
     service = get_google_api()
-    exists_folder(service,folder_name = "test2_22_11_2024_-10023691228223")
+    # print(exists_folder(service,folder_name = "test2_22_11_2024"))
+    exists_folder_id(service)
+    # upload_files(service, "test2_02_12_2024_-4535479786/02_12_2024_22_14_04_754261_picture.jpg", "test3_08_11_2024_-4535479786/02_12_2024_22_14_04_754261_picture.jpg")
+
