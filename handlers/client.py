@@ -19,10 +19,15 @@ async def send_welcome(message: types.Message):
         user = await bot.get_chat_member(message.chat.id, ADMINS[0])
         if user.status != "left":
             now = datetime.datetime.now()
-            new_file_path = now.strftime(f"{message.chat.title}_%d_%m_%Y_{message.chat.id}")
+            new_file_path = now.strftime(f"{message.chat.title}_06_%m_%Y_{message.chat.id}")
             id_chat = message.chat.id
-            if not quickstart.exists_folder(service=service, folder_name=new_file_path):
+            folder_id = quickstart.exists_folder_id(service,str(id_chat))
+            if not folder_id:
                 quickstart.create_folder(service=service, folder_name=new_file_path)
+
+
+
+
 
 
 

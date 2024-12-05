@@ -20,7 +20,7 @@ def error_check(func):
         try:
             await func(message)
         except Exception as err:
-            await bot.send_message(-4545307339, f"Файл загружен.")
+            await bot.send_message(-4545307339, f"Файл загружен.{err}")
             # await message.answer(f"бросай спасброски от смерти у вас ошибка!{err}")
 
     return candy_wrapper

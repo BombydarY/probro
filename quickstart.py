@@ -88,16 +88,16 @@ def exists_folder(service, folder_name):
         return False
 
 
-def exists_folder_id(service):
-    chat_id = "-4595479786"
+def exists_folder_id(service,chat_id:str):
     results = service.files().list(pageSize=5,
                                    fields="nextPageToken, files(id, name, mimeType, size, parents, modifiedTime)").execute()
     items = results.get('files', [])
-
+    if not items:
+        return False
     for item in items:
         if chat_id in item["name"]:
-            print(item)
-
+            print(item["id"])
+            return item["id"]
 def get_more_inf(service):
     results = (
         service.files()
