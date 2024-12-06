@@ -40,8 +40,8 @@ def get_google_api():
         return None
 
 
-def upload_files(service, file_name, based_file) -> bool:
-    file_metadata = {'name': file_name}
+def upload_files(service, file_name, based_file,folder_id) -> bool:
+    file_metadata = {'name': file_name,"parents":[folder_id]}
     media = MediaFileUpload(based_file, resumable=True)
 
     # Загружаем файл

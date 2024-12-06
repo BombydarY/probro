@@ -42,21 +42,23 @@ async def files_handler(message: types.Message):
     if message.chat.type != "private":
         user = await bot.get_chat_member(message.chat.id, ADMINS[0])
         if user.status != "left":
-            now = datetime.datetime.now()
-            chat_id = message.chat.id
-            s = ""
-            for a in os.listdir():
-                if os.path.isdir(a):
-                    if str(chat_id) in a:
-                        s = a
-                        break
-            # TODO: сделать так, чтобы бот по итогу отправлял все аартинки и файлы просто в папку "абобус"в google disk, пока тестово, лишь бы отправлял
+            id_chat = message.chat.id
+            folder_id = quickstart.exists_folder_id(service, str(id_chat))
+            if not folder_id:
+                return
             file_id = message.photo[-1].file_id if message.photo else message.document.file_id
-
+            now = datetime.datetime.now()
             file = await bot.get_file(file_id)
-            file_name = message.document.file_name if message.document else "picture.jpg"
-            new_file_path = now.strftime(f"{s}/%d_%m_%Y_%H_%M_%S_%f_{file_name}")
+            file_name = message.document.file_name if message.document else "picture.jpg" # todo: в разные процессы (мб)
+            new_file_path = now.strftime(f"%d_%m_%Y_%H_%M_%S_%f_{file_name}")
             await bot.download_file(file.file_path, new_file_path)
+            quickstart.upload_files(service=service, file_name=new_file_path,based_file=new_file_path, folder_id=folder_id)
+
+
+
+
+
+
 
             await bot.send_message(message.chat.id, f"Файл {file_name} загружен.")
 
