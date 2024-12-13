@@ -1,21 +1,21 @@
 import os.path
+from typing import Any
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
+from googleapiclient.discovery import build, Resource
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 
-# If modifying these scopes, delete the file token.json.
-# SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
 SCOPES = ["https://www.googleapis.com/auth/drive"]
 
 
-def get_google_api():
+def get_google_api():   # todo: сделать тайпхинты
+    """Создание экземпляра Google API"""
     creds = None
 
-    if os.path.exists("token.json"):
+    if os.path.exists("token.json"):    
         creds = Credentials.from_authorized_user_file("token.json", SCOPES)
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
@@ -31,17 +31,15 @@ def get_google_api():
 
     try:
         service = build("drive", "v3", credentials=creds)
-        # upload_files(service, "bo.png", "test3_08_11_2024_-4535479786/08_11_2024_22_35_02_853977_picture.jpg")
-        # create_folder(service, "test3_08_11_2024")  # Создаем папку с текущим датой и временем
         return service
     except HttpError as error:
-        # TODO(developer) - Handle errors from drive API.
         print(f"An error occurred: {error}")
         return None
 
 
-def upload_files(service, file_name, based_file,folder_id) -> bool:
-    file_metadata = {'name': file_name,"parents":[folder_id]}
+def upload_files(service: Resource, file_name: str, based_file: str, folder_id: str) -> bool:
+    """Загрузка файлов на гугл драйв (АПИ)"""
+    file_metadata = {'name': file_name, "parents": [folder_id]}
     media = MediaFileUpload(based_file, resumable=True)
 
     # Загружаем файл
@@ -51,14 +49,15 @@ def upload_files(service, file_name, based_file,folder_id) -> bool:
             media_body=media,
             fields='id'
         ).execute()
-        print(f'Файл загружен на Google Диск. ID файла: {file.get("id")}')
+        logging.debug(f'Файл загружен на Google Диск. ID файла: {file.get("id")}')
         return True
     except Exception as err:
-        print(f"Ошибка в download_files:{err}")
+        logging.error(f"Ошибка в download_files:{err}")
         return False
 
 
-def create_folder(service, folder_name):
+def create_folder(service:Resource, folder_name:str)->bool:
+    """Создание папки на гугл драqв (АПИ)"""
     folder_metadata = {
         'name': folder_name,
         'mimeType': 'application/vnd.google-apps.folder'
@@ -72,7 +71,8 @@ def create_folder(service, folder_name):
         return False
 
 
-def exists_folder(service, folder_name):
+def exists_folder(service:Resource, folder_name:str)->bool:
+    """Проверка наличия папки на гугл драив (АПИ)"""
     chat_id = -4535479786
     query = f"name='{folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
     response = service.files().list(q=query, spaces='drive', fields='files(id, name)').execute()
@@ -88,7 +88,8 @@ def exists_folder(service, folder_name):
         return False
 
 
-def exists_folder_id(service,chat_id:str):
+def exists_folder_id(service:Resource, chat_id: str): # todo: сделать тайпхинты
+    """проверяет наличие ID папки"""
     results = service.files().list(pageSize=5,
                                    fields="nextPageToken, files(id, name, mimeType, size, parents, modifiedTime)").execute()
     items = results.get('files', [])
@@ -98,7 +99,10 @@ def exists_folder_id(service,chat_id:str):
         if chat_id in item["name"]:
             print(item["id"])
             return item["id"]
-def get_more_inf(service):
+
+
+def get_more_inf(service:Resource): # todo: избавиться или закомментировать функцию
+    """Получает информацию о всех загруженных файлах на диске"""
     results = (
         service.files()
         .list(pageSize=5,
@@ -110,20 +114,20 @@ def get_more_inf(service):
     if not items:
         print("No files found.")
         return
-    print("Files:")
 
     for item in items:
-        # if  item["mimeType"] != "image/png":
         print(item)
-        # print(f"{item['name']} ({item['id']})")
 
-
+    return None
 
 
 
 if __name__ == "__main__":
     service = get_google_api()
     # print(exists_folder(service,folder_name = "test2_22_11_2024"))
-    exists_folder_id(service)
-    # upload_files(service, "test2_02_12_2024_-4535479786/02_12_2024_22_14_04_754261_picture.jpg", "test3_08_11_2024_-4535479786/02_12_2024_22_14_04_754261_picture.jpg")
+    exists_folder_id(service, chat_id="ijoehtrn")
+    upload_files(service, "test2_02_12_2024_-4535479786/02_12_2024_22_14_04_754261_picture.jpg",
+                 "test3_08_11_2024_-4535479786/02_12_2024_22_14_04_754261_picture.jpg", folder_id="")
 
+
+# todo: везде, где принты - писать logging.debug() or logging.error() + не забыть написать import logging в том файле, где мы пишем

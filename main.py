@@ -1,3 +1,5 @@
+""" Запускаемый файл """
+
 from aiogram.utils import executor
 from create_bot import dp
 from root import on_startup_func

@@ -5,5 +5,6 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 storage = MemoryStorage()
 
+# Создание бота и диспетчера
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
