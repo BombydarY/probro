@@ -64,7 +64,7 @@ async def files_handler(message: types.Message):
             quickstart.upload_files(service=service, file_name=new_file_path,based_file=new_file_path, folder_id=folder_id)
             logging.debug(f"{file_name} был клёво сохранён. Всё чики-пуки")
             await bot.send_message(message.chat.id, f"Файл {file_name} загружен.")  # todo: нужно ли сообщать в чат, что файл был загружен? узнать у дяди
-
+            # todo: для Паши. обязательно удалять локал файлы после скачивания
 
 def register_handlers_client(dp: Dispatcher):
     dp.register_message_handler(send_welcome, commands=['start'])

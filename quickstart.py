@@ -60,7 +60,8 @@ def create_folder(service:Resource, folder_name:str)->bool:
     """Создание папки на гугл драqв (АПИ)"""
     folder_metadata = {
         'name': folder_name,
-        'mimeType': 'application/vnd.google-apps.folder'
+        'mimeType': 'application/vnd.google-apps.folder',
+        'parents': ['1Fx09qIryiKi3Nj1CtWMqomh14Xc_BfX1'],
     }
     try:
         folder = service.files().create(body=folder_metadata, fields='id').execute()
@@ -88,17 +89,45 @@ def exists_folder(service:Resource, folder_name:str)->bool:
         return False
 
 
-def exists_folder_id(service:Resource, chat_id: str): # todo: сделать тайпхинты
-    """проверяет наличие ID папки"""
-    results = service.files().list(pageSize=5,
-                                   fields="nextPageToken, files(id, name, mimeType, size, parents, modifiedTime)").execute()
-    items = results.get('files', [])
-    if not items:
-        return False
-    for item in items:
-        if chat_id in item["name"]:
-            print(item["id"])
-            return item["id"]
+# def exists_folder_id(service:Resource, chat_id: str): # todo: сделать тайпхинты
+#     """проверяет наличие ID папки"""
+#     results = service.files().list(pageSize=5,
+#                                    fields="nextPageToken, files(id, name, mimeType, size, parents, modifiedTime)").execute()
+#     items = results.get('files', [])
+#     if not items:
+#         return False
+#     for item in items:
+#         if chat_id in item["name"]:
+#             print(item["id"])
+#             return item["id"]
+
+
+
+def exists_folder_id(service, chat_id: str, parent_folder_id: str = "1Fx09qIryiKi3Nj1CtWMqomh14Xc_BfX1") -> str:
+    query = (
+        f"'{parent_folder_id}' in parents and "
+        f"name contains '{chat_id}' and "
+        f"mimeType = 'application/vnd.google-apps.folder' and "
+        f"trashed = false")
+    try:
+        results = service.files().list(
+            q=query,
+            pageSize=10,
+            fields="files(id, name)"
+        ).execute()
+
+        items = results.get('files', [])
+        if not items:
+            print("No files found")
+            return False
+
+        folder_id = items[0]["id"]
+        print(f"ID папки с фрагментом названия '{chat_id}' найдена: {folder_id}")
+        return folder_id
+    except HttpError as error:
+        print(f"An error occurred: {error}")
+        return None
+
 
 
 def get_more_inf(service:Resource): # todo: избавиться или закомментировать функцию
@@ -125,9 +154,11 @@ def get_more_inf(service:Resource): # todo: избавиться или зако
 if __name__ == "__main__":
     service = get_google_api()
     # print(exists_folder(service,folder_name = "test2_22_11_2024"))
-    exists_folder_id(service, chat_id="ijoehtrn")
-    upload_files(service, "test2_02_12_2024_-4535479786/02_12_2024_22_14_04_754261_picture.jpg",
-                 "test3_08_11_2024_-4535479786/02_12_2024_22_14_04_754261_picture.jpg", folder_id="")
-
+    # exists_folder_id(service, chat_id="")
+    # upload_files(service, "test2_02_12_2024_-4535479786/02_12_2024_22_14_04_754261_picture.jpg",
+    #              "test3_08_11_2024_-4535479786/02_12_2024_22_14_04_754261_picture.jpg", folder_id="")
+    # print(exists_folder_id2(service, chat_id="-4535479786"))
+    # list_folders(service)
+    # print(exists_folder_with_name_fragment(service, name_fragment="-4535479780"))
 
 # todo: везде, где принты - писать logging.debug() or logging.error() + не забыть написать import logging в том файле, где мы пишем
