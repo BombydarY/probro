@@ -1,12 +1,14 @@
 import os.path
 from typing import Any
-
+import logging
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build, Resource
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
+
+from settings import BASED_FOLDER_ID
 
 SCOPES = ["https://www.googleapis.com/auth/drive"]
 
@@ -61,7 +63,7 @@ def create_folder(service:Resource, folder_name:str)->bool:
     folder_metadata = {
         'name': folder_name,
         'mimeType': 'application/vnd.google-apps.folder',
-        'parents': ['1Fx09qIryiKi3Nj1CtWMqomh14Xc_BfX1'],
+        'parents': [BASED_FOLDER_ID],
     }
     try:
         folder = service.files().create(body=folder_metadata, fields='id').execute()
@@ -103,7 +105,7 @@ def exists_folder(service:Resource, folder_name:str)->bool:
 
 
 
-def exists_folder_id(service, chat_id: str, parent_folder_id: str = "1Fx09qIryiKi3Nj1CtWMqomh14Xc_BfX1") -> str:
+def exists_folder_id(service, chat_id: str, parent_folder_id: str = BASED_FOLDER_ID) -> str:
     query = (
         f"'{parent_folder_id}' in parents and "
         f"name contains '{chat_id}' and "
@@ -160,5 +162,5 @@ if __name__ == "__main__":
     # print(exists_folder_id2(service, chat_id="-4535479786"))
     # list_folders(service)
     # print(exists_folder_with_name_fragment(service, name_fragment="-4535479780"))
-
+    get_more_inf(service)
 # todo: везде, где принты - писать logging.debug() or logging.error() + не забыть написать import logging в том файле, где мы пишем

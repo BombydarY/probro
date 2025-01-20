@@ -1,7 +1,7 @@
 from aiogram import types
 
 from create_bot import bot
-from settings import ADMINS
+from settings import ADMINS, ID_MISTAKES
 import logging
 
 
@@ -23,8 +23,9 @@ def error_check(func):
         try:
             await func(message)
         except Exception as err:
+            print (err)
             logging.error(f"Ошибка {func.__name__}:{err}")
-            await bot.send_message(-4545307339, f"!!!СРОЧНО В БОТЕ.\n\n{func.__name__}: {err}")
+            await bot.send_message(ID_MISTAKES, f"!!!СРОЧНО В БОТЕ.\n\n{func.__name__}: {err}")
             
 
     return candy_wrapper

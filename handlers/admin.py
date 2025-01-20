@@ -6,8 +6,8 @@ from decorators import admin_check
 
 @admin_check
 async def admin_panel(message: types.Message):
-    pass
+    await bot.send_message(message.from_user.id, 'im working')
 
 
 def register_handlers_admin(dp: Dispatcher):
-    dp.register_message_handler(admin_panel, commands=['ppp'])
+    dp.register_message_handler(admin_panel, commands=['test'])
