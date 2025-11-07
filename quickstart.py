@@ -13,7 +13,7 @@ from settings import BASED_FOLDER_ID
 SCOPES = ["https://www.googleapis.com/auth/drive"]
 
 
-def get_google_api():   # todo: сделать тайпхинты
+def get_google_api():
     """Создание экземпляра Google API"""
     creds = None
 
@@ -91,7 +91,7 @@ def exists_folder(service:Resource, folder_name:str)->bool:
         return False
 
 
-# def exists_folder_id(service:Resource, chat_id: str): # todo: сделать тайпхинты
+# def exists_folder_id(service:Resource, chat_id: str):
 #     """проверяет наличие ID папки"""
 #     results = service.files().list(pageSize=5,
 #                                    fields="nextPageToken, files(id, name, mimeType, size, parents, modifiedTime)").execute()
@@ -132,7 +132,7 @@ def exists_folder_id(service, chat_id: str, parent_folder_id: str = BASED_FOLDER
 
 
 
-def get_more_inf(service:Resource): # todo: избавиться или закомментировать функцию
+def get_more_inf(service:Resource):
     """Получает информацию о всех загруженных файлах на диске"""
     results = (
         service.files()
@@ -163,4 +163,3 @@ if __name__ == "__main__":
     # list_folders(service)
     # print(exists_folder_with_name_fragment(service, name_fragment="-4535479780"))
     get_more_inf(service)
-# todo: везде, где принты - писать logging.debug() or logging.error() + не забыть написать import logging в том файле, где мы пишем
